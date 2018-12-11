@@ -57,9 +57,9 @@
     <!-- 分页信息 -->
     <div class="row">
         <!-- 分页文字信息 -->
-        <div class="col-md-6">当前页数：，总共页，总共条记录</div>
+        <div class="col-md-6" id="page_info_area"></div>
         <!-- 分页条 -->
-
+        <div class="col-md-6" id="page_nav_area"></div>
     </div>
 </div>
 <div class="row"></div>
@@ -80,6 +80,9 @@
                 //1.解析并展示员工数据
                 build_emps_table(result);
                 //2.解析并显示分页数据
+                build_page_info(result);
+                //3.解析并显示导航条
+                build_page_nav(result);
             }
         })
     })
@@ -104,9 +107,31 @@
 
         })
     }
-
+    
+    //解析分页信息方法
+    function build_page_info(result) {
+        $("#page_info_area").append("当前页数："+ result.extend.pageInfo.pageNum+"，总共"+ result.extend.pageInfo.pages +"页，总共"+ result.extend.pageInfo.total +"条记录")
+    }
+    //解析分页导航条
     function build_page_nav(result) {
+        //创建父元素 ul
+        var ul = $("<ul></ul>").addClass("pagination");
+        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","#"));
+        var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+        var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","#"));
+        ul.append(firstPageLi).append(prePageLi);
+        $.each(result.extend.pageInfo.navigatepageNums,function (index,item) {
+            var numLi =  $("<li></li>").append($("<a></a>").append(item).attr("href","#"));
+            ul.append(numLi);
+        })
 
+        ul.append(nextPageLi).append(lastPageLi);
+        //把拼接后的ul添加到对应的父元素中
+        var nav = $("<nav></nav>").append(ul);
+
+
+        nav.appendTo($("#page_nav_area"));
     }
 </script>
 </body>
