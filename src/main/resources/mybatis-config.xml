@@ -8,11 +8,12 @@
     </settings>
     <!---->
     <typeAliases>
-        <package name="com.rytong.crud.bean"></package>
+        <package name="com.rytong.crud.bean"/>
     </typeAliases>
 
     <plugins>
         <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="reasonable" value="true"/>
         </plugin>
     </plugins>
 </configuration>

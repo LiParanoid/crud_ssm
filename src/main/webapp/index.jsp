@@ -71,23 +71,12 @@
         src="${APP_PATH}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(function () {
-        $.ajax({
-            url: "${APP_PATH}/emps",
-            data: "pn=1",
-            type: "GET",
-            success: function (result) {
-                //console.log(result);
-                //1.解析并展示员工数据
-                build_emps_table(result);
-                //2.解析并显示分页数据
-                build_page_info(result);
-                //3.解析并显示导航条
-                build_page_nav(result);
-            }
-        })
+        //去首页
+        to_page(1);
     })
 
     function build_emps_table(result) {
+        $("#emps_table tbody").empty();
         var emps = result.extend.pageInfo.list
         $.each(emps, function (index, item) {
             var empIdTd = $("<td></td>").append(item.empId);
@@ -107,22 +96,59 @@
 
         })
     }
-    
+
     //解析分页信息方法
     function build_page_info(result) {
-        $("#page_info_area").append("当前页数："+ result.extend.pageInfo.pageNum+"，总共"+ result.extend.pageInfo.pages +"页，总共"+ result.extend.pageInfo.total +"条记录")
+        //清空分页信息方法
+        $("#page_info_area").empty();
+        $("#page_info_area").append("当前页数：" + result.extend.pageInfo.pageNum + "，总共" + result.extend.pageInfo.pages + "页，总共" + result.extend.pageInfo.total + "条记录")
     }
+
     //解析分页导航条
     function build_page_nav(result) {
+        //清空分页导航条
+        $("#page_nav_area").empty();
         //创建父元素 ul
         var ul = $("<ul></ul>").addClass("pagination");
-        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","#"));
+        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页"));
+
         var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+
+        if (result.extend.pageInfo.hasPreviousPage == false) {
+            firstPageLi.addClass("disabled")
+            prePageLi.addClass("disabled");
+        } else {
+            firstPageLi.click(function () {
+                to_page(1);
+            });
+            prePageLi.click(function () {
+                to_page(result.extend.pageInfo.pageNum - 1);
+            })
+        }
         var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
-        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","#"));
+        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页"));
+        if (result.extend.pageInfo.hasNextPage == false) {
+            lastPageLi.addClass("disabled")
+            nextPageLi.addClass("disabled");
+        } else {
+            nextPageLi.click(function () {
+                to_page(result.extend.pageInfo.pageNum + 1);
+            })
+            lastPageLi.click(function () {
+                to_page(result.extend.pageInfo.pages);
+            })
+
+        }
         ul.append(firstPageLi).append(prePageLi);
-        $.each(result.extend.pageInfo.navigatepageNums,function (index,item) {
-            var numLi =  $("<li></li>").append($("<a></a>").append(item).attr("href","#"));
+        $.each(result.extend.pageInfo.navigatepageNums, function (index, item) {
+            var numLi = $("<li></li>").append($("<a></a>").append(item));
+            if (result.extend.pageInfo.pageNum == item) {
+                numLi.addClass("active");
+            }
+            numLi.click(function () {
+                to_page(item);
+            });
+
             ul.append(numLi);
         })
 
@@ -132,6 +158,23 @@
 
 
         nav.appendTo($("#page_nav_area"));
+    }
+
+    function to_page(pn) {
+        $.ajax({
+            url: "${APP_PATH}/emps",
+            data: "pn=" + pn,
+            type: "GET",
+            success: function (result) {
+                //console.log(result);
+                //1.解析并展示员工数据
+                build_emps_table(result);
+                //2.解析并显示分页数据
+                build_page_info(result);
+                //3.解析并显示导航条
+                build_page_nav(result);
+            }
+        })
     }
 </script>
 </body>
