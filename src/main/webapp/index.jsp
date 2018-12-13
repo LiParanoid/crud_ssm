@@ -26,10 +26,61 @@
             <h1>SSM-CRUD</h1>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="empAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">员工添加</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="empName_add_input" class="col-sm-2 control-label" >empName</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="empName" id="empName_add_input" placeholder="empName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_add_input" class="col-sm-2 control-label" name="email">email</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control"  name="email" id="email_add_input" placeholder="email@rytong.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label" >gender</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" id="gender1_add_check" value="M" checked="checked"> 男
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" id="gender2_add_check" value="F"> 女
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="deptName_add_select" >deptName</label>
+                            <div class="col-sm-4">
+                                <select  class="form-control" name="dId" id="deptName_add_select">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <%--按钮位置--%>
     <div class="row">
         <div class="col-md-4  col-md-offset-8">
-            <button type="button" class="btn btn-primary">新增</button>
+            <button type="button" class="btn btn-primary" id="emp_add_modal_btn">新增</button>
             <button type="button" class="btn btn-danger">删除</button>
         </div>
     </div>
@@ -176,6 +227,13 @@
             }
         })
     }
+
+    $("#emp_add_modal_btn").click(function () {
+        $("#empAddModal").modal({
+            backdrop:"static"
+
+        })
+    })
 </script>
 </body>
 </html>
