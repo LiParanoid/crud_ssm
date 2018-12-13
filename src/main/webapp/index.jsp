@@ -39,22 +39,25 @@
                 <div class="modal-body">
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label for="empName_add_input" class="col-sm-2 control-label" >empName</label>
+                            <label for="empName_add_input" class="col-sm-2 control-label">empName</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="empName" id="empName_add_input" placeholder="empName">
+                                <input type="text" class="form-control" name="empName" id="empName_add_input"
+                                       placeholder="empName">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="email_add_input" class="col-sm-2 control-label" name="email">email</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control"  name="email" id="email_add_input" placeholder="email@rytong.com">
+                                <input type="text" class="form-control" name="email" id="email_add_input"
+                                       placeholder="email@rytong.com">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label  class="col-sm-2 control-label" >gender</label>
+                            <label class="col-sm-2 control-label">gender</label>
                             <div class="col-sm-10">
                                 <label class="radio-inline">
-                                    <input type="radio" name="gender" id="gender1_add_check" value="M" checked="checked"> 男
+                                    <input type="radio" name="gender" id="gender1_add_check" value="M"
+                                           checked="checked"> 男
                                 </label>
                                 <label class="radio-inline">
                                     <input type="radio" name="gender" id="gender2_add_check" value="F"> 女
@@ -62,9 +65,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="deptName_add_select" >deptName</label>
+                            <label class="col-sm-2 control-label" for="deptName_add_select">deptName</label>
                             <div class="col-sm-4">
-                                <select  class="form-control" name="dId" id="deptName_add_select">
+                                <select class="form-control" name="dId" id="deptName_add_select">
                                 </select>
                             </div>
                         </div>
@@ -72,7 +75,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-primary" id="emp_save_btn">保存</button>
                 </div>
             </div>
         </div>
@@ -121,6 +124,7 @@
 <script
         src="${APP_PATH}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+    var totalRecord;
     $(function () {
         //去首页
         to_page(1);
@@ -153,6 +157,7 @@
         //清空分页信息方法
         $("#page_info_area").empty();
         $("#page_info_area").append("当前页数：" + result.extend.pageInfo.pageNum + "，总共" + result.extend.pageInfo.pages + "页，总共" + result.extend.pageInfo.total + "条记录")
+        totalRecord = result.extend.pageInfo.total;
     }
 
     //解析分页导航条
@@ -228,12 +233,49 @@
         })
     }
 
+    //为新增按钮绑定点击事件
     $("#emp_add_modal_btn").click(function () {
+        //在弹出模态框之前发送ajax请求获取部门列表
+        getDepts();
+
+        //点击新增按钮弹出模态框
         $("#empAddModal").modal({
-            backdrop:"static"
+            backdrop: "static"
 
         })
     })
+    //为保存按钮绑定点击事件
+    $("#emp_save_btn").click(function () {
+        //静态模板中保存的表单数据提交给服务器进行保存
+        //发送ajax请求 新增员工信息
+        $.ajax({
+            url:"${APP_PATH}/emps",
+            type:"POST",
+            data: $("#empAddModal form").serialize(),
+            success:function (result) {
+                //关闭模态框
+                $("#empAddModal").modal("hide");
+                //跳转到最后一页
+                to_page(totalRecord);
+            }
+        })
+    });
+
+    function getDepts() {
+        $.ajax({
+            url: "${APP_PATH}/depts",
+            type: "GET",
+            success: function (result) {
+                //console.log(result)
+                $("#empAddModal select").empty();
+                $.each(result.extend.depts,function (index,item) {
+                    var optionEle = $("<option></option>").append(item.deptName).attr("value",item.deptId)
+                    optionEle.appendTo($("#empAddModal select"));
+                })
+
+            }
+        })
+    }
 </script>
 </body>
 </html>
