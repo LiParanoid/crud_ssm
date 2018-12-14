@@ -244,8 +244,30 @@
 
         })
     })
+
+    function validate_add_form(){
+        //1.拿到要校验的数据使用正则表达式进行校验
+        var empName = $("#empName_add_input").val();
+        var regName = /(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,5}$)/;
+        if(!regName.test(empName)){
+            alert("用户名可以是2-5位的中文或者6-16位的大小写英文字母和'_'、'-'的组合");
+            return false;
+        }
+        var email = $("#email_add_input").val();
+        regName = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/;
+        if(!regName.test(email)){
+            alert("邮箱格式不正确");
+            return false;
+        }
+        return true;
+
+    }
     //为保存按钮绑定点击事件
     $("#emp_save_btn").click(function () {
+        //在保存之前进行正则表达式的校验
+        if (!validate_add_form()){
+            return;
+        }
         //静态模板中保存的表单数据提交给服务器进行保存
         //发送ajax请求 新增员工信息
         $.ajax({
