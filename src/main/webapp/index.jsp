@@ -43,6 +43,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" name="empName" id="empName_add_input"
                                        placeholder="empName">
+                                <span class="help-block"></span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -50,6 +51,8 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" name="email" id="email_add_input"
                                        placeholder="email@rytong.com">
+                                <span class="help-block"></span>
+
                             </div>
                         </div>
                         <div class="form-group">
@@ -249,20 +252,42 @@
         //1.拿到要校验的数据使用正则表达式进行校验
         var empName = $("#empName_add_input").val();
         var regName = /(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,5}$)/;
+        var empNameFlag = true;
+        var emailFlag = true;
         if(!regName.test(empName)){
-            alert("用户名可以是2-5位的中文或者6-16位的大小写英文字母和'_'、'-'的组合");
-            return false;
+            show_validate_msg("#empName_add_input","error","用户名可以是2-5位的中文或者6-16位的大小写英文字母和'_'、'-'的组合");
+            empNameFlag = false;
+        }else {
+            show_validate_msg("#empName_add_input","success","");
         }
         var email = $("#email_add_input").val();
         regName = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/;
         if(!regName.test(email)){
-            alert("邮箱格式不正确");
-            return false;
+            show_validate_msg("#email_add_input","error","邮箱格式不正确");
+            emailFlag = false;
+        }else {
+            show_validate_msg("#email_add_input","success","");
         }
-        return true;
+        if (empNameFlag == false || emailFlag == false){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    function show_validate_msg(ele,status,msg){
+        $(ele).parent().removeClass("has-success has-error");
+        $(ele).next("span").text("");
+        if ("success"==status){
+            $(ele).parent().addClass("has-success");
+            $(ele).next("span").text(msg);
+        }else if("error"==status){
+            $(ele).parent().addClass("has-error");
+            $(ele).next("span").text(msg);
+        }
 
     }
-    //为保存按钮绑定点击事件
+  //为保存按钮绑定点击事件
     $("#emp_save_btn").click(function () {
         //在保存之前进行正则表达式的校验
         if (!validate_add_form()){
