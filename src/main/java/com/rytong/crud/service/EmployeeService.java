@@ -1,6 +1,7 @@
 package com.rytong.crud.service;
 
 import com.rytong.crud.bean.Employee;
+import com.rytong.crud.bean.EmployeeExample;
 import com.rytong.crud.dao.EmployeeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class EmployeeService {
     @Autowired
     EmployeeMapper employeeMapper;
+
 
     /**
      * 查询所有员工
@@ -31,5 +33,18 @@ public class EmployeeService {
      */
     public void saveEmp(Employee employee) {
         employeeMapper.insertSelective(employee);
+    }
+
+    /**
+     *
+     * @param empName
+     * @return  true 为用户名可用
+     */
+    public Boolean checkEmpName(String empName) {
+        EmployeeExample example = new EmployeeExample();
+        EmployeeExample.Criteria criteria = example.createCriteria();
+        criteria.andEmpNameEqualTo(empName);
+        long l = employeeMapper.countByExample(example);
+        return (l == 0);
     }
 }

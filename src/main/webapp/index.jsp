@@ -236,8 +236,37 @@
         })
     }
 
+    //为用户名输入框添加onblur事件
+    $("#empName_add_input").blur(function () {
+        var empName = $("#empName_add_input").val();
+        if("" == empName){
+            $("#empName_add_input").parent().removeClass("has-success has-error");
+            $("#empName_add_input").next("span").text("");
+            return;
+        }
+        $.ajax({
+            url:"${APP_PATH}/checkEmpName",
+            data:"empName="+empName,
+            type:"POST",
+            success:function (result) {
+                if (result.code == 100){
+                    show_validate_msg("#empName_add_input","success","用户名可用");
+                    $("#empName_add_input").attr("ajax-vl","success");
+                }else if(result.code == 200){
+                    show_validate_msg("#empName_add_input","error","用户名已存在");
+                    $("#empName_add_input").attr("ajax-vl","error");
+                }
+            }
+        })
+    });
+
     //为新增按钮绑定点击事件
     $("#emp_add_modal_btn").click(function () {
+        $("#empAddModal form")[0].reset();
+        $("#empName_add_input").parent().removeClass("has-success has-error");
+        $("#empName_add_input").next("span").text("");
+        $("#email_add_input").parent().removeClass("has-success has-error");
+        $("#email_add_input").next("span").text("");
         //在弹出模态框之前发送ajax请求获取部门列表
         getDepts();
 
@@ -246,7 +275,7 @@
             backdrop: "static"
 
         })
-    })
+    });
 
     function validate_add_form(){
         //1.拿到要校验的数据使用正则表达式进行校验
@@ -289,10 +318,17 @@
     }
   //为保存按钮绑定点击事件
     $("#emp_save_btn").click(function () {
+        var checkEmpName=$("#empName_add_input").attr("ajax-vl");
+        if (checkEmpName == "error"){
+            return;
+        }else if(checkEmpName == "success"){
+
+        }
         //在保存之前进行正则表达式的校验
         if (!validate_add_form()){
             return;
         }
+
         //静态模板中保存的表单数据提交给服务器进行保存
         //发送ajax请求 新增员工信息
         $.ajax({

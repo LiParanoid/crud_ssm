@@ -23,6 +23,17 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    @ResponseBody
+    @RequestMapping("/checkEmpName")
+    public Msg checkEmpName(@RequestParam("empName") String empName){
+        Boolean b = employeeService.checkEmpName(empName);
+        if(b){
+            return Msg.success();
+        }else{
+            return Msg.fail();
+        }
+    }
+
     /**
      * 员工保存
      * @return
