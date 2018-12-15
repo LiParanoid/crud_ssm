@@ -253,7 +253,7 @@
                     show_validate_msg("#empName_add_input","success","用户名可用");
                     $("#empName_add_input").attr("ajax-vl","success");
                 }else if(result.code == 200){
-                    show_validate_msg("#empName_add_input","error","用户名已存在");
+                    show_validate_msg("#empName_add_input","error",result.extend.msg_vl);
                     $("#empName_add_input").attr("ajax-vl","error");
                 }
             }
@@ -284,7 +284,7 @@
         var empNameFlag = true;
         var emailFlag = true;
         if(!regName.test(empName)){
-            show_validate_msg("#empName_add_input","error","用户名可以是2-5位的中文或者6-16位的大小写英文字母和'_'、'-'的组合");
+            show_validate_msg("#empName_add_input","error",);
             empNameFlag = false;
         }else {
             show_validate_msg("#empName_add_input","success","");

@@ -26,11 +26,16 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping("/checkEmpName")
     public Msg checkEmpName(@RequestParam("empName") String empName){
+        String regx = "(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";
+        boolean math = empName.matches(regx);
+        if(!math){
+            return Msg.fail().add("msg_vl","用户名可以是2-5位的中文或者6-16位的大小写英文字母和'_'、'-'的组合");
+        }
         Boolean b = employeeService.checkEmpName(empName);
         if(b){
             return Msg.success();
         }else{
-            return Msg.fail();
+            return Msg.fail().add("msg_vl","用户名已存在");
         }
     }
 
