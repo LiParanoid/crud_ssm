@@ -239,22 +239,22 @@
     //为用户名输入框添加onblur事件
     $("#empName_add_input").blur(function () {
         var empName = $("#empName_add_input").val();
-        if("" == empName){
+        if ("" == empName) {
             $("#empName_add_input").parent().removeClass("has-success has-error");
             $("#empName_add_input").next("span").text("");
             return;
         }
         $.ajax({
-            url:"${APP_PATH}/checkEmpName",
-            data:"empName="+empName,
-            type:"POST",
-            success:function (result) {
-                if (result.code == 100){
-                    show_validate_msg("#empName_add_input","success","用户名可用");
-                    $("#empName_add_input").attr("ajax-vl","success");
-                }else if(result.code == 200){
-                    show_validate_msg("#empName_add_input","error",result.extend.msg_vl);
-                    $("#empName_add_input").attr("ajax-vl","error");
+            url: "${APP_PATH}/checkEmpName",
+            data: "empName=" + empName,
+            type: "POST",
+            success: function (result) {
+                if (result.code == 100) {
+                    show_validate_msg("#empName_add_input", "success", "用户名可用");
+                    $("#empName_add_input").attr("ajax-vl", "success");
+                } else if (result.code == 200) {
+                    show_validate_msg("#empName_add_input", "error", result.extend.msg_vl);
+                    $("#empName_add_input").attr("ajax-vl", "error");
                 }
             }
         })
@@ -277,69 +277,80 @@
         })
     });
 
-    function validate_add_form(){
+    function validate_add_form() {
         //1.拿到要校验的数据使用正则表达式进行校验
         var empName = $("#empName_add_input").val();
         var regName = /(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,5}$)/;
         var empNameFlag = true;
         var emailFlag = true;
-        if(!regName.test(empName)){
-            show_validate_msg("#empName_add_input","error",);
+        if (!regName.test(empName)) {
+            show_validate_msg("#empName_add_input", "error",);
             empNameFlag = false;
-        }else {
-            show_validate_msg("#empName_add_input","success","");
+        } else {
+            show_validate_msg("#empName_add_input", "success", "");
         }
         var email = $("#email_add_input").val();
         regName = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/;
-        if(!regName.test(email)){
-            show_validate_msg("#email_add_input","error","邮箱格式不正确");
+        if (!regName.test(email)) {
+            show_validate_msg("#email_add_input", "error", "邮箱格式不正确");
             emailFlag = false;
-        }else {
-            show_validate_msg("#email_add_input","success","");
+        } else {
+            show_validate_msg("#email_add_input", "success", "");
         }
-        if (empNameFlag == false || emailFlag == false){
+        if (empNameFlag == false || emailFlag == false) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
-    function show_validate_msg(ele,status,msg){
+    function show_validate_msg(ele, status, msg) {
         $(ele).parent().removeClass("has-success has-error");
         $(ele).next("span").text("");
-        if ("success"==status){
+        if ("success" == status) {
             $(ele).parent().addClass("has-success");
             $(ele).next("span").text(msg);
-        }else if("error"==status){
+        } else if ("error" == status) {
             $(ele).parent().addClass("has-error");
             $(ele).next("span").text(msg);
         }
 
     }
-  //为保存按钮绑定点击事件
+
+    //为保存按钮绑定点击事件
     $("#emp_save_btn").click(function () {
-        var checkEmpName=$("#empName_add_input").attr("ajax-vl");
-        if (checkEmpName == "error"){
+        var checkEmpName = $("#empName_add_input").attr("ajax-vl");
+        if (checkEmpName == "error") {
             return;
-        }else if(checkEmpName == "success"){
+        } else if (checkEmpName == "success") {
 
         }
         //在保存之前进行正则表达式的校验
-        if (!validate_add_form()){
+        if (!validate_add_form()) {
             return;
         }
 
         //静态模板中保存的表单数据提交给服务器进行保存
         //发送ajax请求 新增员工信息
         $.ajax({
-            url:"${APP_PATH}/emps",
-            type:"POST",
+            url: "${APP_PATH}/emps",
+            type: "POST",
             data: $("#empAddModal form").serialize(),
-            success:function (result) {
-                //关闭模态框
-                $("#empAddModal").modal("hide");
-                //跳转到最后一页
-                to_page(totalRecord);
+            success: function (result) {
+                if (result.code == 100) {
+                    //关闭模态框
+                    $("#empAddModal").modal("hide");
+                    //跳转到最后一页
+                    to_page(totalRecord);
+
+                } else {
+                    if(undefined != result.extend.errorFieldMap.email){
+                        show_validate_msg("#email_add_input", "error", result.extend.errorFieldMap.email);
+                    }
+                    if(undefined != result.extend.errorFieldMap.empName){
+                        show_validate_msg("#empName_add_input", "error", result.extend.errorFieldMap.empName);
+                    }
+                }
             }
         })
     });
@@ -351,8 +362,8 @@
             success: function (result) {
                 //console.log(result)
                 $("#empAddModal select").empty();
-                $.each(result.extend.depts,function (index,item) {
-                    var optionEle = $("<option></option>").append(item.deptName).attr("value",item.deptId)
+                $.each(result.extend.depts, function (index, item) {
+                    var optionEle = $("<option></option>").append(item.deptName).attr("value", item.deptId)
                     optionEle.appendTo($("#empAddModal select"));
                 })
 

@@ -127,7 +127,17 @@
 		    <artifactId>aspectjweaver</artifactId>
 		    <version>1.9.2</version>
 		</dependency>
-		
+
+		<!--添加JSR303校验的依赖库 hibernate-validator -->
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.0.13.Final</version>
+		</dependency>
+
+
+
 
 
 
