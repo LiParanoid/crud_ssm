@@ -28,6 +28,23 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    /**
+     * 按照员工id查询
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/emp/{id}",method = RequestMethod.GET)
+    @ResponseBody
+    public Msg getEmp(@PathVariable("id") Integer id){
+        Employee emp = employeeService.getEmp(id);
+        return Msg.success().add("emp",emp);
+    }
+
+    /**
+     *
+     * @param empName
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/checkEmpName")
     public Msg checkEmpName(@RequestParam("empName") String empName) {

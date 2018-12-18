@@ -97,9 +97,7 @@
                         <div class="form-group">
                             <label for="empName_add_input" class="col-sm-2 control-label">empName</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="empName" id="empName_update_input"
-                                       placeholder="empName">
-                                <span class="help-block"></span>
+                                <p class="form-control-static" id ="empName_update_static"></p>
                             </div>
                         </div>
                         <div class="form-group">
@@ -203,6 +201,7 @@
              <span class="glyphicon glyphicon-pencil" aria-hidden="true">新增
              */
             var editBtn = $("<button></button>").addClass("btn btn-primary btn-sm edit_btn").append($("<span></span>").addClass("glyphicon glyphicon-pencil").append("编辑"));
+            editBtn.attr("edit-id",item.empId);
             var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn").append($("<span></span>").addClass("glyphicon glyphicon-trash").append("删除"));
             var btnTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
             //append能链式调用的原因是元素
@@ -410,7 +409,20 @@
             }
         })
     });
-
+    function getEmp(id) {
+        $.ajax({
+            url:"${APP_PATH}/emp/"+id,
+            type:"GET",
+            success:function (result) {
+                var empDate = result.extend.emp;
+                //console.log(result);
+                $("#empName_update_static").text(empDate.empName);
+                $("#email_update_input").val(empDate.email);
+                $("#empUpdateModal input[name=gender]").val([empDate.gender]);
+                $("#empUpdateModal select").val([empDate.dId]);
+            }
+        })
+    }
     function getDepts(ele) {
         $.ajax({
             url: "${APP_PATH}/depts",
@@ -432,9 +444,11 @@
     //3.jquery新版没有live 用 on 代替
     $(document).on("click",".edit_btn",function () {
         //alert("edit");
-        //查出员工信息
-        getDepts("#empUpdateModal select");
         //查出部门信息，并显示部门列表
+        getDepts("#empUpdateModal select");
+
+        //查出员工信息
+        getEmp($(this).attr("edit-id"));
         //弹出模态框
         $("#empUpdateModal").modal({
             backdrop: "static",
