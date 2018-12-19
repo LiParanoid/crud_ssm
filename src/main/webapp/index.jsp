@@ -181,7 +181,7 @@
 <script
         src="${APP_PATH}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    var totalRecord;
+    var totalRecord,currentPageNum;
     $(function () {
         //去首页
         to_page(1);
@@ -216,6 +216,7 @@
         $("#page_info_area").empty();
         $("#page_info_area").append("当前页数：" + result.extend.pageInfo.pageNum + "，总共" + result.extend.pageInfo.pages + "页，总共" + result.extend.pageInfo.total + "条记录")
         totalRecord = result.extend.pageInfo.total;
+        currentPageNum = result.extend.pageInfo.pageNum;
     }
 
     //解析分页导航条
@@ -423,6 +424,31 @@
             }
         })
     }
+
+    //点击更新按钮，更新员工信息
+    $("#emp_update_btn").click(function () {
+        //验证邮箱是否可用
+        var email = $("#email_update_input").val();
+        regName = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/;
+        if (!regName.test(email)) {
+            show_validate_msg("#email_update_input", "error", "邮箱格式不正确");
+            return;
+        } else {
+            show_validate_msg("#email_update_input", "success", "");
+        }
+        //发送员工信息更新ajax请求
+        $.ajax({
+            url:"${APP_PATH}/emp/"+$(this).attr("edit-id"),
+            type:"PUT",
+            data:$("#empUpdateModal form").serialize(),
+            success:function (resule) {
+                //关闭模态框
+                $("#empUpdateModal").modal("hide");
+                to_page(currentPageNum);
+            }
+        })
+
+    });
     function getDepts(ele) {
         $.ajax({
             url: "${APP_PATH}/depts",
@@ -449,6 +475,8 @@
 
         //查出员工信息
         getEmp($(this).attr("edit-id"));
+        //将员工id绑定给编辑按钮
+        $("#emp_update_btn").attr("edit-id",$(this).attr("edit-id"));
         //弹出模态框
         $("#empUpdateModal").modal({
             backdrop: "static",

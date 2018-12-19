@@ -29,6 +29,18 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     /**
+     * 员工更新方法
+     * @param employee
+     * @return
+     */
+    @RequestMapping(value = "/emp/{empId}",method = RequestMethod.PUT)
+    @ResponseBody
+    public Msg saveEmp(Employee employee){
+        employeeService.updateEmp(employee);
+        return Msg.success();
+    }
+
+    /**
      * 按照员工id查询
      * @param id
      * @return
