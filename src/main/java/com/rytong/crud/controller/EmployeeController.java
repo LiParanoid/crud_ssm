@@ -28,6 +28,13 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    @ResponseBody
+    @RequestMapping(value = "/emp/{id}",method = RequestMethod.DELETE)
+    public Msg deleteEmp(@PathVariable("id") Integer id){
+        employeeService.deleteEmp(id);
+        return Msg.success();
+    }
+
     /**
      * 员工更新方法
      * @param employee

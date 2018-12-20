@@ -203,6 +203,7 @@
             var editBtn = $("<button></button>").addClass("btn btn-primary btn-sm edit_btn").append($("<span></span>").addClass("glyphicon glyphicon-pencil").append("编辑"));
             editBtn.attr("edit-id",item.empId);
             var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn").append($("<span></span>").addClass("glyphicon glyphicon-trash").append("删除"));
+            delBtn.attr("del-id",item.empId);
             var btnTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
             //append能链式调用的原因是元素
             $("<tr></tr>").append(empIdTd).append(empNameTd).append(genderTd).append(emailTd).append(deptNameTd).append(btnTd).appendTo("#emps_table tbody");
@@ -481,6 +482,23 @@
         $("#empUpdateModal").modal({
             backdrop: "static",
         })
+    })
+
+    $(document).on("click",".delete_btn",function () {
+        //获取员工名字
+        var empId = $(this).attr("del-id");
+        var empName = $(this).parents("tr").find("td:eq(1)").text();
+        //alert($(this).parents("tr").find("td:eq(1)").text())
+        if(confirm("确认删除"+empName+"吗？")){
+            $.ajax({
+                url:"${APP_PATH}/emp/"+empId,
+                type:"DELETE",
+                success:function (result) {
+                    alert(result.msg);
+                    to_page(currentPageNum);
+                }
+            })
+        }
     })
 </script>
 </body>
