@@ -28,39 +28,50 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    /**
+     * 通过改造后成为一个可以实现单个删除和批量删除的方法
+     */
     @ResponseBody
-    @RequestMapping(value = "/emp/{id}",method = RequestMethod.DELETE)
-    public Msg deleteEmp(@PathVariable("id") Integer id){
-        employeeService.deleteEmp(id);
-        return Msg.success();
+    @RequestMapping(value = "/emp/{ids}", method = RequestMethod.DELETE)
+    public Msg deleteEmp(@PathVariable("ids") String ids) {
+        if (ids.contains("-")) {
+            String[] ids_str = ids.split("-");
+            employeeService.deleteBatch(ids_str);
+            return Msg.success();
+        } else {
+            int id = Integer.parseInt(ids);
+            employeeService.deleteEmp(id);
+            return Msg.success();
+        }
     }
 
     /**
      * 员工更新方法
+     *
      * @param employee
      * @return
      */
-    @RequestMapping(value = "/emp/{empId}",method = RequestMethod.PUT)
+    @RequestMapping(value = "/emp/{empId}", method = RequestMethod.PUT)
     @ResponseBody
-    public Msg saveEmp(Employee employee){
+    public Msg saveEmp(Employee employee) {
         employeeService.updateEmp(employee);
         return Msg.success();
     }
 
     /**
      * 按照员工id查询
+     *
      * @param id
      * @return
      */
-    @RequestMapping(value = "/emp/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/emp/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Msg getEmp(@PathVariable("id") Integer id){
+    public Msg getEmp(@PathVariable("id") Integer id) {
         Employee emp = employeeService.getEmp(id);
-        return Msg.success().add("emp",emp);
+        return Msg.success().add("emp", emp);
     }
 
     /**
-     *
      * @param empName
      * @return
      */
@@ -89,15 +100,15 @@ public class EmployeeController {
     @ResponseBody
     public Msg saveMsg(@Valid Employee employee, BindingResult result) {
         if (result.hasErrors()) {
-            Map<String,Object> messageMap = new HashMap<String, Object>();
+            Map<String, Object> messageMap = new HashMap<String, Object>();
             List<FieldError> fieldErrors = result.getFieldErrors();
-            for (FieldError fieldError: fieldErrors) {
+            for (FieldError fieldError : fieldErrors) {
                 //错误的字段名
                 String errorField = fieldError.getField();
                 String errorDefaultMessage = fieldError.getDefaultMessage();
-                messageMap.put(errorField,errorDefaultMessage);
+                messageMap.put(errorField, errorDefaultMessage);
             }
-            return Msg.fail().add("errorFieldMap",messageMap);
+            return Msg.fail().add("errorFieldMap", messageMap);
         } else {
             employeeService.saveEmp(employee);
             return Msg.success();

@@ -6,6 +6,7 @@ import com.rytong.crud.dao.EmployeeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,5 +61,16 @@ public class EmployeeService {
 
     public void deleteEmp(Integer id) {
         employeeMapper.deleteByPrimaryKey(id);
+    }
+
+    public void deleteBatch(String[] ids_str) {
+        List<Integer> ids_Int = new ArrayList<>();
+        EmployeeExample example  = new EmployeeExample();
+        EmployeeExample.Criteria criteria = example.createCriteria();
+        for (String ids:ids_str) {
+            ids_Int.add(Integer.parseInt(ids));
+        }
+        criteria.andEmpIdIn(ids_Int);
+        employeeMapper.deleteByExample(example);
     }
 }
